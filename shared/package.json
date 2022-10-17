@@ -1,0 +1,16 @@
+{
+  "name": "@docker-demo/shared",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "exports": {
+    "./*": "./src/*"
+  },
+  "main": "./src/index.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
