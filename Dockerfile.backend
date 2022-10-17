@@ -1,0 +1,18 @@
+FROM node:16-alpine
+
+WORKDIR /usr/src/app
+
+COPY ./package*.json ./
+COPY ./backend/package*.json ./backend/
+COPY ./shared/package*.json ./shared/
+
+RUN npm ci -w backend
+
+COPY ./backend/ ./backend/
+COPY ./shared/ ./shared/
+
+RUN npm run build -w backend
+
+EXPOSE 4000
+
+CMD ["node", "backend/dist/app.js"]
