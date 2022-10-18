@@ -27,12 +27,12 @@ todosController.get(
 
 todosController.post(
   "/",
-  async (req: Request<TodoItem>, res: Response<TodoItem[]>) => {
+  async (req: Request<TodoItem>, res: Response<TodoItem>) => {
     try {
       const item = req.body;
       item.timeStamp = new Date();
-      await saveTodoItem(item);
-      res.send(await loadAllTodoItems());
+      const added = await saveTodoItem(item);
+      res.send(added);
     } catch (e) {
       res.sendStatus(400);
     }
@@ -41,9 +41,13 @@ todosController.post(
 
 todosController.delete(
   "/:todoId",
-  async (req: Request, res: Response<TodoItem[]>) => {
-    await deleteTodoItem(req.params.todoId);
-    res.send(await loadAllTodoItems());
+  async (req: Request, res: Response<TodoItem>) => {
+    const deleted = await deleteTodoItem(req.params.todoId);
+    if (deleted) {
+      res.send(deleted)
+    } else {
+      res.sendStatus(404)
+    }
   }
 );
 
