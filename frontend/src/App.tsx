@@ -3,35 +3,36 @@ import "./App.css";
 import { TodoItem } from "@docker-demo/shared";
 import axios from "axios";
 
-axios.defaults.baseURL =
-  process.env.REACT_APP_TODO_API || "http://localhost:4000";
+const baseURL = process.env.REACT_APP_TODO_API || "http://localhost:1234";
+console.info(`Setting base URL for API to ${baseURL}`);
+axios.defaults.baseURL = baseURL;
 
 const getTodos = async (): Promise<TodoItem[]> => {
-  const response = await axios.get<TodoItem[]>("/todos")
-  return response.data
-}
+  const response = await axios.get<TodoItem[]>("/todos");
+  return response.data;
+};
 
 const postTodo = async (item: TodoItem): Promise<TodoItem[]> => {
-  const response = await axios.post<TodoItem[]>("/todos", item)
-  return response.data
-}
+  const response = await axios.post<TodoItem[]>("/todos", item);
+  return response.data;
+};
 
 const deleteTodo = async (item: TodoItem): Promise<TodoItem[]> => {
-  const response = await axios.delete<TodoItem[]>(`/todos/${item._id}`)
-  return response.data
-}
+  const response = await axios.delete<TodoItem[]>(`/todos/${item._id}`);
+  return response.data;
+};
 
 function App() {
   const [todoText, setTodoText] = useState<string>("");
   const [todos, setTodos] = useState<TodoItem[]>([]);
 
   useEffect(() => {
-    getTodos().then(setTodos).catch(console.error)
-  }, [])
+    getTodos().then(setTodos).catch(console.error);
+  }, []);
 
   const removeTodo = async (item: TodoItem) => {
-    await deleteTodo(item)
-    setTodos(await getTodos())
+    await deleteTodo(item);
+    setTodos(await getTodos());
   };
 
   const addTodo = async (text: string) => {
@@ -39,8 +40,8 @@ function App() {
     const latest = await postTodo({
       text,
       timeStamp: new Date(),
-    })
-    setTodos(latest)
+    });
+    setTodos(latest);
   };
 
   return (

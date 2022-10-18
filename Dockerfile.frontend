@@ -11,6 +11,8 @@ RUN npm ci -w frontend
 COPY ./frontend/ ./frontend/
 COPY ./shared/ ./shared/
 
+ARG APP_TODO_API
+ENV REACT_APP_TODO_API ${APP_TODO_API}
 RUN npm run build -w frontend
 
 EXPOSE 3000
