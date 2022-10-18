@@ -1,46 +1,67 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
 import { TodoItem } from "@docker-demo/shared";
-import axios from "axios";
 
-axios.defaults.baseURL =
-  process.env.REACT_APP_TODO_API || "http://localhost:4000";
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import {
+  getFirestore,
+  CollectionReference,
+  collection,
+  DocumentData,
+  onSnapshot,
+  doc,
+  addDoc,
+  deleteDoc,
+  query
+} from "firebase/firestore";
+import { queryAllByAltText } from "@testing-library/react";
 
-const getTodos = async (): Promise<TodoItem[]> => {
-  const response = await axios.get<TodoItem[]>("/todos")
-  return response.data
-}
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
-const postTodo = async (item: TodoItem): Promise<TodoItem[]> => {
-  const response = await axios.post<TodoItem[]>("/todos", item)
-  return response.data
-}
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyD2XkdllSRVPUN-RMQSS5lxwYvIlxDmE9Y",
+  authDomain: "backend3-typescript-demo.firebaseapp.com",
+  projectId: "backend3-typescript-demo",
+  storageBucket: "backend3-typescript-demo.appspot.com",
+  messagingSenderId: "671582057941",
+  appId: "1:671582057941:web:f3b0005c8439a5499f395c",
+};
 
-const deleteTodo = async (item: TodoItem): Promise<TodoItem[]> => {
-  const response = await axios.delete<TodoItem[]>(`/todos/${item._id}`)
-  return response.data
-}
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+export const firestore = getFirestore();
+
+const createCollection = <T = DocumentData>(collectionName: string) => {
+  return collection(firestore, collectionName) as CollectionReference<T>;
+};
+
+const todosCollection = createCollection<TodoItem>("todos");
 
 function App() {
   const [todoText, setTodoText] = useState<string>("");
   const [todos, setTodos] = useState<TodoItem[]>([]);
 
   useEffect(() => {
-    getTodos().then(setTodos).catch(console.error)
-  }, [])
-
-  const removeTodo = async (item: TodoItem) => {
-    await deleteTodo(item)
-    setTodos(await getTodos())
-  };
+    const q = query(todosCollection)
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const latest: TodoItem[] = []
+      querySnapshot.forEach((doc) => {
+        latest.push(doc.data())
+      })
+      setTodos(latest)
+    })
+    return unsubscribe;
+  }, []);
 
   const addTodo = async (text: string) => {
     setTodoText("");
-    const latest = await postTodo({
-      text,
-      timeStamp: new Date(),
+    addDoc(todosCollection, {
+      text: text,
+      timeStamp: new Date()
     })
-    setTodos(latest)
   };
 
   return (
@@ -49,9 +70,8 @@ function App() {
       <main className="App-content">
         <ul>
           {todos.map((item) => (
-            <li key={item._id}>
-              {item.text} -{" "}
-              <span onClick={() => removeTodo(item)}>Delete?</span>
+            <li key={item.id}>
+              {item.text}            
             </li>
           ))}
         </ul>
