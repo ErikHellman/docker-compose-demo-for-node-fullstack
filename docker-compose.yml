@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   backend:
-    build: 
+    build:
       dockerfile: Dockerfile.backend
     ports:
       - "4000:4000"
@@ -18,3 +18,6 @@ services:
     image: mongo:6.0.2
     ports:
       - "27017:27017"
+    container_name: db
+    volumes:
+      - /data/db
