@@ -1,5 +1,6 @@
 export interface TodoItem {
-    _id?: string,
-    text: string,
-    timeStamp: Date,    
+    id?: string,
+    todo_text: string,
+    created?: Date,    
+    author?: string
 }

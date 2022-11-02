@@ -6,6 +6,8 @@ import {
   loadTodoItem,
   saveTodoItem,
 } from "./todos-repository";
+import jsonwebtoken from "jsonwebtoken";
+import { JWT_COOKIE_NAME } from "./login-controller";
 
 const todosController = express.Router();
 
@@ -31,6 +33,10 @@ todosController.post(
     try {
       const item = req.body;
       item.timeStamp = new Date();
+      const token = req.cookies[JWT_COOKIE_NAME]
+      if (token) {
+        item.author = jsonwebtoken.decode(token)?.sub
+      }
       await saveTodoItem(item);
       res.send(await loadAllTodoItems());
     } catch (e) {

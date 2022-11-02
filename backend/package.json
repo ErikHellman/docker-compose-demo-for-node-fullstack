@@ -27,6 +27,10 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.2",
     "express": "^4.18.1",
-    "mongoose": "^6.6.5"
+    "install": "^0.13.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.6.5",
+    "npm": "^8.19.2",
+    "postgres": "^3.3.1"
   }
 }

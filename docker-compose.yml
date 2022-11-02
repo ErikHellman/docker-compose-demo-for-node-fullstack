@@ -7,6 +7,7 @@ services:
       - "4000:4000"
     environment:
       - MONGODB_URL=mongodb://db:27017/mytodos
+      - POSTGRES_URL=postgres://todoapp:todoapp@localhost:5432/todoapp
 
   frontend:
     build:
@@ -17,9 +18,15 @@ services:
       - "3000:3000"
 
   db:
-    image: mongo:6.0.2
+    image: postgres:15
     ports:
-      - "27017:27017"
+      - "5432:5432"
     container_name: db
     volumes:
       - /data/db
+      - ./sql/initdb.sql:/docker-entrypoint-initdb.d/create_tables.sql
+    environment:
+      - POSTGRES_USER=todoapp
+      - POSTGRES_PASSWORD=todoapp
+      - POSTGRES_DB=todoapp
+      - PGDATA=/data/db
